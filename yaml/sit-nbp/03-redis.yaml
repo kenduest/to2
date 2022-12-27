@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-server
+  namespace: sit-nbp
+  labels:
+    name: redis-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: redis-server
+  template:
+    metadata:
+      labels:
+        name: redis-server
+    spec:
+      hostname: redis-server
+      securityContext:
+        fsGroup: 1000950000
+      containers:
+        - image: ocp-sit-quay.ocp-sit.test/rhel8/redis-6:1-92
+          name: redis-server
+          env:
+            - name: "REDIS_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: redis-server
+                  key: redis-password
+          volumeMounts:
+          - mountPath: /var/lib/redis/data 
+            name: data-store
+          ports:
+            - containerPort: 6379 
+              name: tcp
+      volumes:
+      - name: data-store
+        persistentVolumeClaim:
+          claimName: redis-data
+

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis 
+  namespace: ken-test 
+  labels:
+    app: redis-server
+spec:
+  ports:
+    - port: 6379
+      name: tcp
+      protocol: TCP
+  selector:
+    name: redis-server 
+  type: LoadBalancer
+
